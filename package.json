@@ -1,8 +1,8 @@
 {
-  "name": "react-hooks-typescript-npm-starter",
-  "version": "0.0.0",
-  "description": "This is a React hooks library package starter",
-  "author": "Jakub Biesiada",
+  "name": "worker-fetch-looper",
+  "version": "0.0.1",
+  "description": "This is a Fetch looper based on Web Worker and Fetch API",
+  "author": "Den Pol",
   "license": "MIT",
   "main": "lib/react-hooks-typescript-npm-starter.cjs.js",
   "module": "lib/react-hooks-typescript-npm-starter.esm.js",
@@ -21,16 +21,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/the-mes/react-hooks-typescript-npm-starter.git"
+    "url": "https://github.com/pravosleva/worker-fetch-looper.git"
   },
   "keywords": [
     "react",
-    "hooks"
+    "hooks",
+    "fetch",
+    "fetcher",
+    "polling",
+    "poll",
+    "looper",
+    "worker",
+    "infinity"
   ],
   "bugs": {
-    "url": "https://github.com/the-mes/react-hooks-typescript-npm-starter/issues"
+    "url": "https://github.com/pravosleva/worker-fetch-looper/issues"
   },
-  "homepage": "https://github.com/the-mes/react-hooks-typescript-npm-starter#readme",
+  "homepage": "https://github.com/pravosleva/worker-fetch-looper#readme",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@testing-library/react": "^11.2.7",
