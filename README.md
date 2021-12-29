@@ -32,9 +32,15 @@ const App = () => {
         !document.hidden, // Browser tab is active
     },
     cb: {
-      onUpdateState: ({ state }: any) => {
-        console.log('- state effect: new state!')
-        console.log(state)
+      onUpdateState: ({ res, type }: { res: any, type: string }) => {
+        console.log(`- state effect: new state! type: ${type}`)
+        switch (type) {
+          case 'ACTION_CODE_1':
+            // NOTE: Updates from Web Worker detected as effect!
+            console.log(res) // Response by server
+            break;
+          default: break;
+        }
       },
       // Optional:
       onCatch: (err) => {
@@ -43,7 +49,7 @@ const App = () => {
       }
     },
     runnerAction: {
-      type: 'check-room-state',
+      type: 'ACTION_CODE_1',
       payload: {
         url: `https://jsonplaceholder.typicode.com/todos/${counter}`,
         method: 'GET',
@@ -64,13 +70,10 @@ const App = () => {
 /* OUTPUT SAMPLE:
 {
   "state": {
-    "res": {
-      "userId": 1,
-      "id": 10,
-      "title": "illo est ratione doloremque quia maiores aut",
-      "completed": true
-    },
-    "type": "check-room-state"
+    "userId": 1,
+    "id": 15,
+    "title": "ab voluptatum amet voluptas",
+    "completed": true
   },
   "errCounter": 0
 }

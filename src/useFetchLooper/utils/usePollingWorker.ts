@@ -23,7 +23,7 @@ export const usePollingWorker = ({ fn }: { fn: (arg: any) => void }) => {
       workerRef.current = worker;
       workerRef.current.onmessage = (e) => {
         // console.log(e.data.res)
-        setState(e.data);
+        setState(e.data.res);
         if (workerRef.current) {
           workerRef.current.terminate();
           workerRef.current = null;

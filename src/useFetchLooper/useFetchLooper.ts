@@ -26,6 +26,7 @@ export const useFetchLooper = ({
   };
 }) => {
   // --- POLLING: v2
+  const { type } = runnerAction;
   const { state, run } = usePollingWorker({
     // - NOTE: Callback source code for Blob
     fn: ({ payload, type }: { payload: TWorkerFnParams; type: string }) => {
@@ -55,10 +56,7 @@ export const useFetchLooper = ({
     if (validate.beforeRequest(runnerAction.payload)) {
       const req = () => {
         // console.log(`- run worker in effect #${tick}`);
-        run({
-          type: runnerAction.type,
-          payload: runnerAction.payload,
-        });
+        run(runnerAction);
         setTick((c) => c + 1);
       };
       t.current = setTimeout(req, timeout);
@@ -70,9 +68,8 @@ export const useFetchLooper = ({
   // --
 
   useEffect(() => {
-    if (cb.onUpdateState)
-      cb.onUpdateState({ res: state, type: runnerAction.type });
-  }, [JSON.stringify(state), runnerAction.type]);
+    if (cb.onUpdateState) cb.onUpdateState({ res: state, type });
+  }, [JSON.stringify(state)]);
 
   return { state };
 };
