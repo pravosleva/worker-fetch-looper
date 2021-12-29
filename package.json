@@ -1,0 +1,87 @@
+{
+  "name": "react-hooks-typescript-npm-starter",
+  "version": "0.0.0",
+  "description": "This is a React hooks library package starter",
+  "author": "Jakub Biesiada",
+  "license": "MIT",
+  "main": "lib/react-hooks-typescript-npm-starter.cjs.js",
+  "module": "lib/react-hooks-typescript-npm-starter.esm.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "prepack": "npm run clean && npm run prettier && npm run lint && npm run build",
+    "clean": "rimraf lib/*",
+    "build": "rollup -c",
+    "test": "jest --coverage",
+    "watch": "npm run build -- --watch",
+    "watch:test": "npm run test -- --watch",
+    "lint": "eslint 'src/**/*.ts' --fix",
+    "prettier": "prettier --write 'src/**/*.ts'",
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/the-mes/react-hooks-typescript-npm-starter.git"
+  },
+  "keywords": [
+    "react",
+    "hooks"
+  ],
+  "bugs": {
+    "url": "https://github.com/the-mes/react-hooks-typescript-npm-starter/issues"
+  },
+  "homepage": "https://github.com/the-mes/react-hooks-typescript-npm-starter#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/react-hooks": "^7.0.0",
+    "@tsconfig/create-react-app": "^1.0.2",
+    "@types/jest": "^26.0.23",
+    "@types/react": "^17.0.11",
+    "@typescript-eslint/parser": "^4.26.1",
+    "cz-conventional-changelog": "3.3.0",
+    "cz-emoji": "^1.3.1",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^6.0.0",
+    "jest": "^27.0.4",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-test-renderer": "^17.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "semantic-release": "^17.4.3",
+    "semantic-release-gitmoji": "^1.3.4",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-emoji"
+    }
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "npm run prettier",
+      "npm run lint"
+    ]
+  }
+}
