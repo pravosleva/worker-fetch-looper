@@ -8,35 +8,58 @@ yarn add worker-fetch-looper
 
 ```js
 import { useFetchLooper } from 'worker-fetch-looper';
+import React, { useState, useEffect, useRef } from 'react';
 
-// Use in component:
-const { state } = useFetchLooper({
-  validate: {
-    // NOTE: Request will not be sent if false (Worker runner will not be started)
-    beforeRequest: (payload) => !document.hidden // Browser tab is active...
-    // && !!payload.body.field_name && // Validate body...
-  },
-  cb: {
-    // NOTE: Will be called on effect
-    onUpdateState: (hookResult: { state }) => {
-      const { state } = hookResult
-      if (isDev) console.log('- state effect: new state!'); // State updated. Use new state...
-    },
-    // NOTE: Optional
-    onCatch: (err) => {
-      conosole.log(err)
-    };
-  },
-  runnerAction: {
-    type: 'check-room-state',
-    payload: {
-      url: `${REACT_APP_API_URL}/chat/api/common-notifs/check-room-state`,
-      method: 'POST',
-      body: { room_id: room, tsUpdate: sprintFeatureSnap.tsUpdate }
+const App = () => {
+  const [counter, setCounter] = useState<number>(1)
+  const [errCounter, setErrCounter] = useState<number>(0)
+  const timeout = useRef<NodeJS.Timeout>()
+  useEffect(() => {
+    timeout.current = setTimeout(() => {
+      setCounter((c) => c + 1)
+    }, 5000)
+    return () => {
+      if (!!timeout.current) clearTimeout(timeout.current)
     }
-  },
-  timeout: 1000
-});
+  }, [counter])
+
+  // -- Look:
+  const { state } = useFetchLooper({
+    validate: {
+      // NOTE: Request will not be sent if false (Worker runner will not be started)
+      beforeRequest: (payload: any) =>
+        // !!payload.body.dynamic_field // Room selected
+        !document.hidden, // Browser tab is active
+    },
+    cb: {
+      onUpdateState: ({ state }: any) => {
+        console.log('- state effect: new state!')
+        console.log(state)
+      },
+      // Optional:
+      onCatch: (err) => {
+        console.log(err)
+        setErrCounter((c) => c + 1)
+      }
+    },
+    runnerAction: {
+      type: 'check-room-state',
+      payload: {
+        url: `https://jsonplaceholder.typicode.com/todos/${counter}`,
+        method: 'GET',
+        // body: {},
+      }
+    },
+    timeout: 1000,
+  })
+  // --
+
+  return (
+    <div>
+      <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify({ state, errCounter }, null, 2)}</pre>
+    </div>
+  );
+}
 ```
 
 ## Based on [react-hooks-typescript-npm-starter](https://github.com/the-mes/react-hooks-typescript-npm-starter)
