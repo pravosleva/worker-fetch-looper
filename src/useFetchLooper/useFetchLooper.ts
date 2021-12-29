@@ -21,14 +21,15 @@ export const useFetchLooper = ({
     beforeRequest: (payload: any) => boolean;
   };
   cb: {
-    onUpdateState: (hookResult: { state: any }) => void;
-    onCatch?: (err: any) => void;
+    onUpdateState: (hookResult: { res: any; type: string }) => void;
+    onCatch?: (err: any, type: string) => void;
   };
 }) => {
   // --- POLLING: v2
   const { state, run } = usePollingWorker({
     // - NOTE: Callback source code for Blob
-    fn: ({ url, method, body }: TWorkerFnParams) => {
+    fn: ({ payload, type }: { payload: TWorkerFnParams; type: string }) => {
+      const { url, method, body } = payload;
       const fetchOpts: any = {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -38,10 +39,10 @@ export const useFetchLooper = ({
         .then((res) => res.json())
         .then((json) => {
           // @ts-ignore
-          postMessage(json);
+          postMessage({ res: json, type });
         })
         .catch((err) => {
-          if (cb.onCatch) cb.onCatch(err);
+          if (cb.onCatch) cb.onCatch(err, type);
         });
     },
     // -
@@ -69,8 +70,9 @@ export const useFetchLooper = ({
   // --
 
   useEffect(() => {
-    if (cb.onUpdateState) cb.onUpdateState({ state });
-  }, [JSON.stringify(state)]);
+    if (cb.onUpdateState)
+      cb.onUpdateState({ res: state, type: runnerAction.type });
+  }, [JSON.stringify(state), runnerAction.type]);
 
   return { state };
 };

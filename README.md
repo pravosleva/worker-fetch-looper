@@ -60,6 +60,21 @@ const App = () => {
     </div>
   );
 }
+
+/* OUTPUT SAMPLE:
+{
+  "state": {
+    "res": {
+      "userId": 1,
+      "id": 10,
+      "title": "illo est ratione doloremque quia maiores aut",
+      "completed": true
+    },
+    "type": "check-room-state"
+  },
+  "errCounter": 0
+}
+*/
 ```
 
 ## Based on [react-hooks-typescript-npm-starter](https://github.com/the-mes/react-hooks-typescript-npm-starter)
