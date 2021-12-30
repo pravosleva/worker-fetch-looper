@@ -1,6 +1,6 @@
 {
   "name": "worker-fetch-looper",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "This is a Fetch looper based on Web Worker and Fetch API",
   "author": "Den Pol",
   "license": "MIT",
