@@ -65,8 +65,14 @@ export const useFetchLooper = ({
             'type',
             'redirected',
           ];
-          // @ts-ignore
-          for (const key of fields) _originalResDetails[key] = res[key];
+          for (const key of fields) {
+            try {
+              // @ts-ignore
+              _originalResDetails[key] = res[key];
+            } catch (err) {
+              /**/
+            }
+          }
           return { json: await res.json(), _originalResDetails };
         })
         .then(
