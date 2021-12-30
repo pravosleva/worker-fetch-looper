@@ -56,25 +56,17 @@ export const useFetchLooper = ({
 
       fetch(url, fetchOpts)
         .then(async (res: Response) => {
-          const _originalResDetails: any = {};
-          ['status', 'ok', 'statusText'].forEach((key) => {
-            // @ts-ignore
-            _originalResDetails[key] = res[key];
-          });
-          return { json: await res.json(), _originalResDetails };
+          // const _originalResDetails: Partial<Response> = {};
+          // ['status', 'ok', 'statusText'].forEach((key) => {
+          //   // @ts-ignore
+          //   _originalResDetails[key] = res[key]
+          // })
+          return { json: await res.json() };
         })
-        .then(
-          ({
-            json,
-            _originalResDetails,
-          }: {
-            json: any;
-            _originalResDetails: Partial<Response>;
-          }) => {
-            // @ts-ignore
-            postMessage({ res: json, type, _originalResDetails });
-          }
-        )
+        .then(({ json }: { json: any }) => {
+          // @ts-ignore
+          postMessage({ res: json, type });
+        })
         .catch((err) => {
           console.log(err);
           // if (!!cb.onCatch) cb.onCatch({ err, type });
