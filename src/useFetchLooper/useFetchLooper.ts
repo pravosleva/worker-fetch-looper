@@ -18,15 +18,15 @@ export const useFetchLooper = ({
       body?: any;
     };
   };
-  validate: {
-    beforeRequest: ({
+  validate?: {
+    beforeRequest?: ({
       type,
       payload,
     }: {
       type: string;
       payload: any;
     }) => boolean;
-    response: ({ res, type }: { res: TRes; type: string }) => boolean;
+    response?: ({ res, type }: { res: TRes; type: string }) => boolean;
   };
   cb: {
     onUpdateState: (hookResult: { res: TRes; type: string }) => void;
@@ -79,14 +79,20 @@ export const useFetchLooper = ({
   const [tick, setTick] = useState(0);
   const t = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (validate.beforeRequest(runnerAction)) {
-      const req = () => {
-        // console.log(`- run worker in effect #${tick}`);
+    const runIfNecessary = () => {
+      // console.log(`- run worker in effect #${tick}`);
+      if (validate?.beforeRequest) {
+        if (validate.beforeRequest(runnerAction)) {
+          run(runnerAction);
+        } else {
+          // Skip...
+        }
+      } else {
         run(runnerAction);
-        setTick((c) => c + 1);
-      };
-      t.current = setTimeout(req, timeout);
-    }
+      }
+      setTick((c) => c + 1);
+    };
+    t.current = setTimeout(runIfNecessary, timeout);
     return () => {
       if (t.current) clearTimeout(t.current);
     };
