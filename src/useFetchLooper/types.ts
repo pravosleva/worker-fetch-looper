@@ -4,8 +4,5 @@ export type TRes = {
     status: number;
     ok: boolean;
     statusText: string;
-    url: string;
-    type: string;
-    redirected: boolean;
   };
 };

@@ -57,22 +57,11 @@ export const useFetchLooper = ({
       fetch(url, fetchOpts)
         .then(async (res: Response) => {
           const _originalResDetails: any = {};
-          const fields = [
-            'status',
-            'ok',
-            'statusText',
-            'url',
-            'type',
-            'redirected',
-          ];
-          for (const key of fields) {
-            try {
-              // @ts-ignore
-              _originalResDetails[key] = res[key];
-            } catch (err) {
-              /**/
-            }
-          }
+          const fields = ['status', 'ok', 'statusText'];
+          fields.forEach((key) => {
+            // @ts-ignore
+            _originalResDetails[key] = res[key];
+          });
           return { json: await res.json(), _originalResDetails };
         })
         .then(
