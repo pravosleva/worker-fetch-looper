@@ -15,38 +15,53 @@ const App = () => {
   const [errCounter, setErrCounter] = useState<number>(0)
   const timeout = useRef<NodeJS.Timeout>()
   useEffect(() => {
-    timeout.current = setTimeout(() => {
-      setCounter((c) => c + 1)
-    }, 5000)
+    timeout.current = setTimeout(() => { setCounter((c) => c + 1) }, 5000)
     return () => {
       if (!!timeout.current) clearTimeout(timeout.current)
     }
   }, [counter])
 
-  // -- Look:
   const { state } = useFetchLooper({
     validate: {
       // NOTE: Request will not be sent if false (Worker runner will not be started)
-      beforeRequest: (payload: any) =>
-        // !!payload.body.dynamic_field // Room selected
+      beforeRequest: ({ type, payload }: { type: string, payload: any }) =>
+        // !!payload.body.dynamic_field // Validate body
         !document.hidden, // Browser tab is active
+      response: ({ res, type }: { res: TRes, type: string }) => {
+        // console.log(res)
+        return true
+      }
     },
     cb: {
-      onUpdateState: ({ res, type }: { res: any, type: string }) => {
+      onUpdateState: ({ res, type }: { res: TRes, type: string }) => {
         console.log(`- state effect: new state! type: ${type}`)
-        switch (type) {
-          case 'ACTION_CODE_1':
-            // NOTE: Updates from Web Worker detected as effect!
-            console.log(res) // Response by server
-            break;
-          default: break;
+        try {
+          switch (type) {
+            case ACTION_CODE.One:
+              console.log('-- case1')
+              // NOTE: Updates from Web Worker detected as effect!
+              console.log(res) // Response by server
+              break;
+            default:
+              console.log('-- caseX')
+              console.log(res.id)
+              break;
+          }
+        } catch (err) {
+          console.log(err)
         }
       },
-      // Optional:
-      onCatch: (err) => {
+      // NOTE: But only for update state effect and !!validate?.response fuckup!
+      // Not for each response.
+      onCatch: ({ err, res, type }) => {
         console.log(err)
         setErrCounter((c) => c + 1)
-      }
+      },
+      // NOTE: But only for update state effect and !!validate?.response success!
+      // Not for each response.
+      onSuccess: ({ res, type }: { res: TRes, type: string }) => {
+        console.table({ res: JSON.stringify(res), type })
+      },
     },
     runnerAction: {
       type: 'ACTION_CODE_1',
@@ -58,7 +73,6 @@ const App = () => {
     },
     timeout: 1000,
   })
-  // --
 
   return (
     <div>

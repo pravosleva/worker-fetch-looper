@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { useEffect, useState, useRef } from 'react';
 import { usePollingWorker, TWorkerFnParams } from './utils';
+import { TRes } from './types';
 
 export const useFetchLooper = ({
   timeout,
@@ -18,11 +19,27 @@ export const useFetchLooper = ({
     };
   };
   validate: {
-    beforeRequest: (payload: any) => boolean;
+    beforeRequest: ({
+      type,
+      payload,
+    }: {
+      type: string;
+      payload: any;
+    }) => boolean;
+    response: ({ res, type }: { res: TRes; type: string }) => boolean;
   };
   cb: {
-    onUpdateState: (hookResult: { res: any; type: string }) => void;
-    onCatch?: (err: any, type: string) => void;
+    onUpdateState: (hookResult: { res: TRes; type: string }) => void;
+    onCatch?: ({
+      err,
+      type,
+      res,
+    }: {
+      err: any;
+      type: string;
+      res: any;
+    }) => void;
+    onSuccess?: (hookResult: { res: TRes; type: string }) => void;
   };
 }) => {
   // --- POLLING: v2
@@ -36,14 +53,37 @@ export const useFetchLooper = ({
         headers: { 'Content-Type': 'application/json' },
       };
       if (body) fetchOpts.body = JSON.stringify(body);
+
       fetch(url, fetchOpts)
-        .then((res) => res.json())
-        .then((json) => {
+        .then(async (res: Response) => {
+          const _originalResDetails: any = {};
+          const fields = [
+            'status',
+            'ok',
+            'statusText',
+            'url',
+            'type',
+            'redirected',
+          ];
           // @ts-ignore
-          postMessage({ res: json, type });
+          for (const key of fields) _originalResDetails[key] = res[key];
+          return { json: await res.json(), _originalResDetails };
         })
+        .then(
+          ({
+            json,
+            _originalResDetails,
+          }: {
+            json: any;
+            _originalResDetails: Partial<Response>;
+          }) => {
+            // @ts-ignore
+            postMessage({ res: json, type, _originalResDetails });
+          }
+        )
         .catch((err) => {
-          if (cb.onCatch) cb.onCatch(err, type);
+          console.log(err);
+          // if (!!cb.onCatch) cb.onCatch({ err, type });
         });
     },
     // -
@@ -53,7 +93,7 @@ export const useFetchLooper = ({
   const [tick, setTick] = useState(0);
   const t = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (validate.beforeRequest(runnerAction.payload)) {
+    if (validate.beforeRequest(runnerAction)) {
       const req = () => {
         // console.log(`- run worker in effect #${tick}`);
         run(runnerAction);
@@ -68,7 +108,22 @@ export const useFetchLooper = ({
   // --
 
   useEffect(() => {
-    if (cb.onUpdateState) cb.onUpdateState({ res: state, type });
+    if (cb.onUpdateState) {
+      cb.onUpdateState({ res: state, type });
+    }
+    if (validate?.response) {
+      try {
+        const isValid = validate.response({ res: state, type });
+
+        if (isValid) {
+          if (cb.onSuccess) cb.onSuccess({ res: state, type });
+        } else {
+          throw new Error('Invalid param');
+        }
+      } catch (err) {
+        if (cb.onCatch) cb.onCatch({ err, res: state, type });
+      }
+    }
   }, [JSON.stringify(state)]);
 
   return { state };

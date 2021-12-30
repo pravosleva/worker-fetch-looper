@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 
 const workerHandler = (fn: (arg: any) => void) => {
   onmessage = (nativeWorkerEvt: any) => {
-    console.log(nativeWorkerEvt.data); // { type: string, payload: any }
+    // console.log(nativeWorkerEvt.data); // { type: string, payload: any }
     fn(nativeWorkerEvt.data);
   };
 };
@@ -23,7 +23,7 @@ export const usePollingWorker = ({ fn }: { fn: (arg: any) => void }) => {
       workerRef.current = worker;
       workerRef.current.onmessage = (e) => {
         // console.log(e.data.res)
-        setState(e.data.res);
+        setState({ ...e.data.res, _details: e.data._originalResDetails });
         if (workerRef.current) {
           workerRef.current.terminate();
           workerRef.current = null;
