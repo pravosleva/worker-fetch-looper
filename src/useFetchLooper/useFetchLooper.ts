@@ -55,15 +55,15 @@ export const useFetchLooper = ({
       if (body) fetchOpts.body = JSON.stringify(body);
 
       fetch(url, fetchOpts)
-        .then(async (res: Response) => {
+        .then((res: Response) => {
           // const _originalResDetails: Partial<Response> = {};
           // ['status', 'ok', 'statusText'].forEach((key) => {
           //   // @ts-ignore
           //   _originalResDetails[key] = res[key]
           // })
-          return { json: await res.json() };
+          return res.json();
         })
-        .then(({ json }: { json: any }) => {
+        .then((json: any) => {
           // @ts-ignore
           postMessage({ res: json, type });
         })
