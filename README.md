@@ -10,7 +10,7 @@ yarn add worker-fetch-looper
 
 ```js
 import React, { useState, useEffect, useRef } from 'react';
-import { useFetchLooper, TRes } from 'worker-fetch-looper';
+import { useFetchLooper } from 'worker-fetch-looper';
 
 const App = () => {
   // NOTE: No effect if no changes in dynamic state!
@@ -35,7 +35,7 @@ const App = () => {
 };
 ```
 
-### Dynanic params
+### Dynamic params
 
 ```js
 import React, { useState, useEffect, useRef } from 'react';
