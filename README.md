@@ -16,7 +16,7 @@ const App = () => {
   const { state } = useFetchLooper({
     timeout: 1000,
     runnerAction: {
-      type: 'ACTION_CODE_1',
+      type: 'YOUR_CODE',
       payload: {
         url: 'https://jsonplaceholder.typicode.com/todos/1',
         method: 'GET'
@@ -40,6 +40,10 @@ const App = () => {
 import React, { useState, useEffect, useRef } from 'react';
 import { useFetchLooper, TRes } from 'worker-fetch-looper';
 
+enum ACTION_CODE {
+  One = 'ACTION_CODE_1'
+}
+
 const App = () => {
   const [counter, setCounter] = useState<number>(1)
   const [errCounter, setErrCounter] = useState<number>(0)
@@ -52,6 +56,15 @@ const App = () => {
   }, [counter])
 
   const { state } = useFetchLooper({
+    timeout: 1000,
+    runnerAction: {
+      type: 'ACTION_CODE_1',
+      payload: {
+        url: `https://jsonplaceholder.typicode.com/todos/${counter}`,
+        method: 'GET',
+        // body: {},
+      }
+    },
     validate: {
       // NOTE: Request will not be sent if false (Worker runner will not be started)
       beforeRequest: ({ type, payload }: { type: string, payload: any }) =>
@@ -68,12 +81,10 @@ const App = () => {
         try {
           switch (type) {
             case ACTION_CODE.One:
-              console.log('-- case1')
               // NOTE: Updates from Web Worker detected as effect!
               console.log(res) // Response by server
               break;
             default:
-              console.log('-- caseX')
               console.log(res.id)
               break;
           }
@@ -93,15 +104,6 @@ const App = () => {
         console.table({ res: JSON.stringify(res), type })
       },
     },
-    runnerAction: {
-      type: 'ACTION_CODE_1',
-      payload: {
-        url: `https://jsonplaceholder.typicode.com/todos/${counter}`,
-        method: 'GET',
-        // body: {},
-      }
-    },
-    timeout: 1000,
   })
 
   return (
