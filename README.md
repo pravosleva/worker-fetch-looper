@@ -13,6 +13,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useFetchLooper, TRes } from 'worker-fetch-looper';
 
 const App = () => {
+  // NOTE: No effect if no changes in dynamic state!
   const { state } = useFetchLooper({
     timeout: 1000,
     runnerAction: {
