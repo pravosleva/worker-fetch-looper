@@ -28,8 +28,8 @@ export const useFetchLooper = ({
     }) => boolean;
     response?: ({ res, type }: { res: TRes; type: string }) => boolean;
   };
-  cb: {
-    onUpdateState: (hookResult: { res: TRes; type: string }) => void;
+  cb?: {
+    onUpdateState?: (hookResult: { res: TRes; type: string }) => void;
     onCatch?: ({
       err,
       type,
@@ -100,7 +100,7 @@ export const useFetchLooper = ({
   // --
 
   useEffect(() => {
-    if (cb.onUpdateState) {
+    if (cb?.onUpdateState) {
       cb.onUpdateState({ res: state, type });
     }
     if (validate?.response) {
@@ -108,12 +108,12 @@ export const useFetchLooper = ({
         const isValid = validate.response({ res: state, type });
 
         if (isValid) {
-          if (cb.onSuccess) cb.onSuccess({ res: state, type });
+          if (cb?.onSuccess) cb.onSuccess({ res: state, type });
         } else {
           throw new Error('Invalid param');
         }
       } catch (err) {
-        if (cb.onCatch) cb.onCatch({ err, res: state, type });
+        if (cb?.onCatch) cb.onCatch({ err, res: state, type });
       }
     }
   }, [JSON.stringify(state)]);

@@ -4,11 +4,41 @@
 yarn add worker-fetch-looper
 ```
 
-## Usage sample
+## Usage samples
+
+### Simplest
 
 ```js
-import { useFetchLooper } from 'worker-fetch-looper';
 import React, { useState, useEffect, useRef } from 'react';
+import { useFetchLooper, TRes } from 'worker-fetch-looper';
+
+const App = () => {
+  const { state } = useFetchLooper({
+    timeout: 1000,
+    runnerAction: {
+      type: 'ACTION_CODE_1',
+      payload: {
+        url: 'https://jsonplaceholder.typicode.com/todos/1',
+        method: 'GET'
+      }
+    }
+  });
+
+  return (
+    <div>
+      <pre style={{ whiteSpace: 'pre-wrap' }}>
+        {JSON.stringify(state, null, 2)}
+      </pre>
+    </div>
+  );
+};
+```
+
+### Dynanic params
+
+```js
+import React, { useState, useEffect, useRef } from 'react';
+import { useFetchLooper, TRes } from 'worker-fetch-looper';
 
 const App = () => {
   const [counter, setCounter] = useState<number>(1)
