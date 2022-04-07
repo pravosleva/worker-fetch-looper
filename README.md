@@ -57,6 +57,12 @@ const App = () => {
   }, [counter])
 
   const { state } = useFetchLooper({
+    intialState: { // NOTE: Optional (null by default)
+      userId: 0,
+      id: 0,
+      title: "default value",
+      completed: false
+    },
     timeout: 1000,
     runnerAction: {
       type: 'ACTION_CODE_1',

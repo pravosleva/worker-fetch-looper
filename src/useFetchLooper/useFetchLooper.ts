@@ -8,7 +8,9 @@ export const useFetchLooper = ({
   validate,
   runnerAction,
   cb,
+  intialState,
 }: {
+  intialState?: any;
   timeout: number;
   runnerAction: {
     type: string;
@@ -45,6 +47,7 @@ export const useFetchLooper = ({
   // --- POLLING: v2
   const { type } = runnerAction;
   const { state, run } = usePollingWorker({
+    intialState,
     // - NOTE: Callback source code for Blob
     fn: ({ payload, type }: { payload: TWorkerFnParams; type: string }) => {
       const { url, method, body } = payload;

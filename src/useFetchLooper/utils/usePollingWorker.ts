@@ -7,8 +7,13 @@ const workerHandler = (fn: (arg: any) => void) => {
   };
 };
 
-export const usePollingWorker = ({ fn }: { fn: (arg: any) => void }) => {
-  const [state, setState] = useState<any>(null);
+type TProps = {
+  fn: (arg: any) => void;
+  intialState?: any;
+};
+
+export const usePollingWorker = ({ fn, intialState }: TProps) => {
+  const [state, setState] = useState<any>(intialState || null);
   const workerRef = useRef<Worker | null>(null);
 
   const run = (arg: { type: string; payload: any }) => {
